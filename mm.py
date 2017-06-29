@@ -34,6 +34,8 @@ class MyForm(QtGui.QWidget):
         self.setGeometry(.25*width, .04*height, 0.5*width, 0.95*height)
         self.ui.tabWidget.tabBar().moveTab(1, 2)  # This re-orders the tabs. Maybe find a better way.
 
+        self.ui.scrollArea.setWidgetResizable(True)
+
         self.ui.pushButton.clicked.connect(self.merge)
 
         self.ui.calendarWidget.activated.connect(self.show_date)
@@ -132,6 +134,10 @@ class MyForm(QtGui.QWidget):
             box.clear()  # delete selections from QtCreator
             box.addItems(program_times + ['Custom'])  # add selections read in from program list spreadsheet
             box.activated.connect(self.rev_time_box_update)
+
+    @staticmethod
+    def test():
+        print("Resized")
 
     @staticmethod
     def contract_info():
