@@ -2201,14 +2201,11 @@ class MyForm(QtGui.QWidget):
         SchoolName=self.ui.lineEdit_4.text()
         JustDay = self.ui.calendarWidget.selectedDate().toString("dddd")
         JustDate = self.ui.calendarWidget.selectedDate().toString("M/d/yyyy")
-        # SchoolAddress = self.ui.lineEdit_5.text()
-        school_street = self.ui.lineEdit_5.text()
+
+        school_street = self.ui.lineEdit_5.text().translate(str.maketrans('', '', ','))
         school_city = self.ui.lineEdit_108.text()
         school_zip = self.ui.lineEdit_109.text()
         school_address = ', '.join([item.strip() for item in [school_street, school_city, school_zip]])
-        # SplitSchoolAddress = str.split(self.ui.lineEdit_5.text(), ',')
-        # for index in range(len(SplitSchoolAddress)):
-        #     SplitSchoolAddress[index] = SplitSchoolAddress[index].strip()
 
         SchoolPhone = self.ui.lineEdit_8.text()
         SchoolFax = self.ui.lineEdit_2.text()
