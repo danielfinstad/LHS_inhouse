@@ -74,6 +74,11 @@ class MyForm(QtGui.QWidget):
         global new_program_indices
         new_program_indices = None
 
+        # read in reservation email body text from file
+        global res_email_text
+        with open("reservation_confirm_email.txt", "r") as fp:
+            res_email_text = fp.read().splitlines()
+
         # Set path variable for either normal operation or testing
         global path
         path = '//Lhs-pfs01.berkeley.edu/lhs/B2H-EMS/MailMergeTest/'
@@ -134,10 +139,6 @@ class MyForm(QtGui.QWidget):
             box.clear()  # delete selections from QtCreator
             box.addItems(program_times + ['Custom'])  # add selections read in from program list spreadsheet
             box.activated.connect(self.rev_time_box_update)
-
-    @staticmethod
-    def test():
-        print("Resized")
 
     @staticmethod
     def contract_info():
@@ -1421,36 +1422,39 @@ class MyForm(QtGui.QWidget):
     @staticmethod
     def email_contract_strings(kp, section, signed=None, new_payment_entries=None):
         if not section == 'payment':
+            global res_email_text
             subject_string = "The Lawrence Hall of Science Reservation Contract for " + \
                                                  kp["SchoolName"] + " (" + kp["ContractEMS"] + ")"
-            body_string = "Hello,<br><br>" \
-                          "Thank you for your reservation! Attached is a PDF copy of your reservation" \
-                          " contract & information packet for your visit on <b>"+kp["PgmDate"] + \
-                          "</b>, contract number "+kp["ContractEMS"]+".<br><br><font color='red'><b>Full payment is due " \
-                                                                     "by "+kp["PayDate"] + \
-                          "</b></font>, or your program(s) will be canceled. Payment may be made by purchase order, " \
-                          "credit card over" \
-                          " the phone (Visa, Mastercard, Discover, or American Express), or a single check made payable " \
-                          "to UC Regents. <font color='red'><b>Please submit a signed copy of the contract with your " \
-                          "payment.</b></font><br><br>Your reservation will be complete after we receive your payment and " \
-                          "signed contract.<br><br>" \
-                          "<b>If you have booked a group visit, your payment is due at the door. Please submit a signed " \
-                          "copy of the contract to complete your group visit reservation.</b><br><br>" \
-                          "<font color='red'><b>Please carefully <u>review the " \
-                          "attached contract and information pages</u> for all pertinent " \
-                          "information regarding your visit.</b></font><br><br>We require 1 chaperone (admitted free)" \
-                          " per 7 students. Additional adults over this number will be charged $12-$14, depending on " \
-                          "the program(s) selected.<br><br>Upon arrival please be ready to " \
-                          "provide the Visitor Services Desk with a head count of the total number of students and the " \
-                          "total number of adult chaperones attending.<br><br>Thank you again for supporting the Lawrence " \
-                          "Hall of Science! Visit our " \
-                          "<a href='http://www.lawrencehallofscience.org/visit/field_trips#fieldtrips_faq'>FAQ</a> " \
-                          "for answers to frequently asked questions.<br><br><br>" + \
-                          "Sincerely,<br><br>LHS Registration Staff<br><br><br><br><br>--<br><b>REPLY TO:</b> " + \
-                          "lhsreg@berkeley.edu<br><br>Registration<br>The Lawrence Hall of Science<br>1 Centennial Drive #5200<br>" \
-                          "Berkeley, CA 94720-5200<br><br>Registration Phone Hours<br>Monday-Friday 8:30 a.m - 4:30 p.m.<br>" \
-                          "Registration In-person Hours<br>Wednesday-Friday 8:30 a.m. - 4:30 p.m.<br>Ph: 510-642-5134<br>" \
-                          "Fax: 510-643-0994<br>lhsreg@berkeley.edu<br><br>lawrencehallofscience.org<br>"
+            body_string = res_email_text[0] + kp["PgmDate"] + res_email_text[1] + " " + kp["ContractEMS"] + \
+                          res_email_text[2] + " " + kp["PayDate"] + res_email_text[3]
+            # body_string = "Hello,<br><br>" \
+            #               "Thank you for your reservation! Attached is a PDF copy of your reservation" \
+            #               " contract & information packet for your visit on <b>"+kp["PgmDate"] + \
+            #               "</b>, contract number "+kp["ContractEMS"]+".<br><br><font color='red'><b>Full payment is due " \
+            #                                                          "by "+kp["PayDate"] + \
+            #               "</b></font>, or your program(s) will be canceled. Payment may be made by purchase order, " \
+            #               "credit card over" \
+            #               " the phone (Visa, Mastercard, Discover, or American Express), or a single check made payable " \
+            #               "to UC Regents. <font color='red'><b>Please submit a signed copy of the contract with your " \
+            #               "payment.</b></font><br><br>Your reservation will be complete after we receive your payment and " \
+            #               "signed contract.<br><br>" \
+            #               "<b>If you have booked a group visit, your payment is due at the door. Please submit a signed " \
+            #               "copy of the contract to complete your group visit reservation.</b><br><br>" \
+            #               "<font color='red'><b>Please carefully <u>review the " \
+            #               "attached contract and information pages</u> for all pertinent " \
+            #               "information regarding your visit.</b></font><br><br>We require 1 chaperone (admitted free)" \
+            #               " per 7 students. Additional adults over this number will be charged $12-$14, depending on " \
+            #               "the program(s) selected.<br><br>Upon arrival please be ready to " \
+            #               "provide the Visitor Services Desk with a head count of the total number of students and the " \
+            #               "total number of adult chaperones attending.<br><br>Thank you again for supporting the Lawrence " \
+            #               "Hall of Science! Visit our " \
+            #               "<a href='http://www.lawrencehallofscience.org/visit/field_trips#fieldtrips_faq'>FAQ</a> " \
+            #               "for answers to frequently asked questions.<br><br><br>" + \
+            #               "Sincerely,<br><br>LHS Registration Staff<br><br><br><br><br>--<br><b>REPLY TO:</b> " + \
+            #               "lhsreg@berkeley.edu<br><br>Registration<br>The Lawrence Hall of Science<br>1 Centennial Drive #5200<br>" \
+            #               "Berkeley, CA 94720-5200<br><br>Registration Phone Hours<br>Monday-Friday 8:30 a.m - 4:30 p.m.<br>" \
+            #               "Registration In-person Hours<br>Wednesday-Friday 8:30 a.m. - 4:30 p.m.<br>Ph: 510-642-5134<br>" \
+            #               "Fax: 510-643-0994<br>lhsreg@berkeley.edu<br><br>lawrencehallofscience.org<br>"
         else:
             subject_string = "The Lawrence Hall of Science - Payment Confirmation for "+kp["SchoolName"]+" (" + \
                              kp["ContractEMS"]+")"
@@ -1518,9 +1522,9 @@ class MyForm(QtGui.QWidget):
             # Get program date for sorting contract file after checking. Format will be mmmYYYY, e.g. Dec2016
             booked_date = datetime.datetime.strptime(merge_kp["PgmDate"], '%m/%d/%Y').strftime('%b%Y')
 
-            # Find the first empty initials field and fill it with new initials. This must also work for checking revised
-            # contracts, so the RevLine must be retrieved, stripped into separate parts, and then rebuilt with the new
-            # initials in the final "By" field.
+            # Find the first empty initials field and fill it with new initials. This must also work for checking
+            # revise contracts, so the RevLine must be retrieved, stripped into separate parts, and then rebuilt with
+            # the new initials in the final "By" field.
             for i in range(len(checked_by_values)):
                 print(checked_by_values[i])
                 if checked_by_values[i] is None or i == 3:
@@ -1539,7 +1543,7 @@ class MyForm(QtGui.QWidget):
                     else:  # Case where contract has been checked and at least one RevLine exists
                         rev_flag = 'yes'  # contract has been revised, set rev_flag for excel writing
                         if i < 3 or checked_by_values[i] is None:
-                            working_rev_line = checked_by_values[i-1]  # need the RevLine just BEFORE the first blank one
+                            working_rev_line = checked_by_values[i-1]  # need the RevLine just BEFORE the first blank
                         else:
                             working_rev_line = checked_by_values[i]
                         initials_check = working_rev_line[-2:].strip()  # trying to grab checkedby initials from RevLine
@@ -1676,7 +1680,7 @@ class MyForm(QtGui.QWidget):
                     out_dir = os.path.abspath(os.path.join(path, out_folder))
                     if not os.path.exists(out_dir):
                         os.mkdir(out_dir)
-            print(out_dir)
+
             # Check if this is will be a re-filing case. If so, find related files to be moved
             other_files = None
             if "Inhouse " in current_folder and current_folder != out_dir:
@@ -1734,6 +1738,7 @@ class MyForm(QtGui.QWidget):
 
                             # Build strings for email subject and body
                             subject_string, body_string = self.email_contract_strings(merge_kp, 'check')
+                            print(body_string)
 
                             # Send email with pdf contract attached
                             send_mail('lhsreg@berkeley.edu', [merge_kp["ReserverEmail"], 'lhsreg@berkeley.edu'],
